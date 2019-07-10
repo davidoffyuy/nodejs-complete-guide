@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
+  // Page will only display products that user created. User cannot edit other user products.
   Product.find({userId: req.user._id})
   .then(products => {
     res.render("admin/products", {
@@ -63,23 +64,27 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   Product.findById(req.body.productId)
   .then( product => {
+    if (product.userId.toString() !== req.user._id.toString())
+      return res.redirect('/admin/products');
     product.title = req.body.title,
     product.description = req.body.description,
     product.price = req.body.price,
     product.imageUrl = req.body.imageUrl
-    return product.save();
+    product.save()
+    .then( result => {
+      res.redirect("/admin/products");   
+    })
+    .catch( err => {
+      console.log(err);
+      res.redirect("/admin/products");
+    });
   })
-  .then( result => {
-    res.redirect("/admin/products");   
-  })
-  .catch( err => {
-    console.log(err);
-    res.redirect("/admin/products");
-  });
 }
 
 exports.postDeleteProduct = (req, res, next) => {
-  Product.findByIdAndRemove(req.body.productId)
+  const productId = req.body.productId;
+
+  Product.deleteOne({_id: req.body.productId, userId: req.user._id})
   .then(result => {
     res.redirect("/admin/products");
   })
