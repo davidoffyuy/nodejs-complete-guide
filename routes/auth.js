@@ -11,7 +11,10 @@ const isAuth = require('../middleware/is-auth');
 
 // Define routes
 router.get('/login', authController.getLogin);
-router.post('/login', authController.postLogin);
+router.post('/login',
+  body('email').isEmail().withMessage('Enter a valid email address'),
+  body('password').isLength({min: 5}).withMessage('Password does not meet the proper criteria'),
+  authController.postLogin);
 router.post('/logout', authController.postLogout);
 
 router.get('/signup', authController.getSignup);
