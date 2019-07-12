@@ -30,7 +30,7 @@ router.post('/signup',
   body('password', 'Password does not meet the proper criteria.').isLength({min: 5}),
   body('confirmPassword').custom((value, { req }) => {
     if (value !== req.body.password) {
-      throw new Error('Confirm Password does not match.');
+      throw new Error('Confirm Password does not match Password.');
     }
     return true;
   }),

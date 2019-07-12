@@ -19,17 +19,21 @@
 			<div class="form-control">
 				<label for="email">Email</label>
 				<input
+					class="<%= error.param === 'email' ? 'invalid' : '' %>"
 					type="email"
 					name="email"
 					id="email"
+					value="<%= oldInput.email %>"
 				>
 			</div>
 			<div class="form-control">
 				<label for="password">Password</label>
 				<input
+						class="<%= error.param === 'password' ? 'invalid' : '' %>"
 						type="password"
 						name="password"
 						id="password"
+						value="<%= oldInput.password %>"
 				>
 				</div>
 				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
