@@ -12,14 +12,14 @@ const isAuth = require('../middleware/is-auth');
 // Define routes
 router.get('/login', authController.getLogin);
 router.post('/login',
-  body('email').isEmail().withMessage('Enter a valid email address'),
+  body('email').isEmail().withMessage('Enter a valid email address').normalizeEmail(),
   body('password').isLength({min: 5}).withMessage('Password does not meet the proper criteria'),
   authController.postLogin);
 router.post('/logout', authController.postLogout);
 
 router.get('/signup', authController.getSignup);
 router.post('/signup',
-  body('email').isEmail().withMessage('Enter a valid email address.').custom((value) => {
+  body('email').isEmail().withMessage('Enter a valid email address.').normalizeEmail().custom((value) => {
     return User.findOne({email: value})
     .then( userFound => {
       if (userFound) {
@@ -27,8 +27,8 @@ router.post('/signup',
       }
     });
   }),
-  body('password', 'Password does not meet the proper criteria.').isLength({min: 5}),
-  body('confirmPassword').custom((value, { req }) => {
+  body('password', 'Password does not meet the proper criteria.').trim().isLength({min: 5}),
+  body('confirmPassword').trim().custom((value, { req }) => {
     if (value !== req.body.password) {
       throw new Error('Confirm Password does not match Password.');
     }

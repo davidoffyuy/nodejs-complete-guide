@@ -48,9 +48,12 @@ exports.postLogin = (req, res, next) => {
   User.findOne({email: email})
   .then(user => {
     if (!user) {
-      req.flash('message', 'Email Not Found');
-      return req.session.save( err => {
-        res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        pageTitle: 'Login',
+        path: '/login',
+        message: 'Incorrect Email or Password',
+        error: [],
+        oldInput: {email: email, password: ''}
       });
     }
 
@@ -63,8 +66,13 @@ exports.postLogin = (req, res, next) => {
           res.redirect('/');
         });
       }
-      req.flash('message', 'Incorrect password');
-      res.redirect('/login');
+      return res.status(422).render('auth/login', {
+        pageTitle: 'Login',
+        path: '/login',
+        message: 'Incorrect Email or Password',
+        error: [],
+        oldInput: {email: email, password: ''}
+      });
     })
     .catch(err => console.log(err));
   })
