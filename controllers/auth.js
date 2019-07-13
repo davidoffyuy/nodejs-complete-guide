@@ -26,7 +26,7 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     message: message,
     oldInput: {email: '', password: ''},
-    error: []
+    error: ''
   });
 }
 
@@ -52,7 +52,7 @@ exports.postLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         message: 'Incorrect Email or Password',
-        error: [],
+        error: '',
         oldInput: {email: email, password: ''}
       });
     }
@@ -70,7 +70,7 @@ exports.postLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         message: 'Incorrect Email or Password',
-        error: [],
+        error: '',
         oldInput: {email: email, password: ''}
       });
     })
@@ -103,7 +103,7 @@ exports.getSignup = (req, res, next) => {
     pageTitle: 'Signup',
     isAuth: false,
     message: message,
-    error: [],
+    error: '',
     oldInput: {email: '', password: '', confirmPassword: ''}
   });
 };
