@@ -76,10 +76,7 @@ exports.postLogin = (req, res, next) => {
     })
     .catch(err => console.log(err));
   })
-  .catch(err => {
-    console.log(err);
-    res.redirect('/');
-  })
+  .catch(error => next(error));
 }
 
 exports.postLogout = (req, res, next) => {
@@ -170,7 +167,6 @@ exports.postReset = (req, res, next) => {
   crypto.randomBytes(32, (err, buffer) => {
     User.findOne({email: email})
     .then( user => {
-  
       // If email not found
       if (!user) { 
         req.flash('message', 'Email was not found.');
@@ -178,7 +174,6 @@ exports.postReset = (req, res, next) => {
           res.redirect('/reset');
         });
       }
-  
       // If email is found, gerate token, save to session, redirect
       user.resetToken = buffer.toString('hex');
       user.resetTokenExpiration = Date.now() + 3600000;
@@ -198,7 +193,7 @@ exports.postReset = (req, res, next) => {
         });
       });
     })
-    .catch( err => console.log(err));
+    .catch(error => next(error));
   })
 }
 
@@ -219,7 +214,7 @@ exports.getNewPassword = (req, res, next) => {
       resetToken: token
     });
   })
-  .catch( err => console.log(err));
+  .catch(error => next(error));
 }
 
 exports.postNewPassword = (req, res, next) => {
@@ -248,5 +243,5 @@ exports.postNewPassword = (req, res, next) => {
       });
     })
   })
-  .catch( err => console.log(err));
+  .catch(error => next(error));
 }
