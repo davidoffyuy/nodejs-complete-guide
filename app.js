@@ -44,6 +44,17 @@ app.use(express.static(path.join(rootDir, 'public')));
 
 app.use(session({secret: 'home is where the heart is', resave: false, saveUninitialized: false, store: store}));
 
+
+// Add csrf protetion middleware via csurf
+app.use(csrfProtection);
+
+// Setting local data to be available for all renders
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.isAuth = req.session.user ? true : false;
+  next();
+})
+
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -57,18 +68,8 @@ app.use((req, res, next) => {
     next();
   })
   .catch(err => {
-    throw new Error(err);
+    next(err);
   })
-})
-
-// Add csrf protetion middleware via csurf
-app.use(csrfProtection);
-
-// Setting local data to be available for all renders
-app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
-  res.locals.isAuth = req.session.user ? true : false;
-  next();
 })
 
 // Setting up flash messaging
@@ -78,12 +79,12 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-app.get('/500', errorController.error500);
+// app.get('/500', errorController.error500);
 
 app.use(errorController.error404);
 
-app.use((err, req, res, next) => {
-  res.redirect('/500');
+app.use((error, req, res, next) => {
+  res.status(500).render('500', {pageTitle: 'Error Occurred', path: '/500'});
 });
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
