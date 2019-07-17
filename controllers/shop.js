@@ -127,7 +127,7 @@ exports.getCheckout = (req, res, next) => {
 exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
   const invoiceName = 'invoice-' + orderId + '.pdf';
-  const invoicePath = path.join('data', 'invoices', invoiceName);
+  const invoicePath = path.join(rootDir, 'data', 'invoices', invoiceName);
   console.log(invoicePath);
 
   Order.findOne({_id: orderId})
@@ -138,13 +138,14 @@ exports.getInvoice = (req, res, next) => {
     if (order.user.userId.toString() !== req.session.user._id.toString()) {
       return next(new Error('User does not have access'));
     }
-    fs.readFile(invoicePath, (err, data) => {
-      if (err)
-        return next(err);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
-      res.send(data);
-    });
+    // fs.readFile(invoicePath, (err, data) => {
+    //   if (err)
+    //     return next(err);
+    //   res.setHeader('Content-Type', 'application/pdf');
+    //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+    //   res.send(data);
+    // });
+    res.sendFile(invoicePath);
   })
   .catch(error => next(error));
 }
