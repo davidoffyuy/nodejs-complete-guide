@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const multer = require('multer');
 const session = require('express-session');
 const path = require('path');
 const rootDir = require('./util/path');
@@ -37,13 +38,33 @@ app.set('views', 'views'); //set views folder to /views
 //make sure the browser doesn't check for a favicon upon load
 app.get("/favicon.ico", (req, res) => res.status(204));
 
+// Parser for POST text data
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Parser for image files
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images')
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/png' || file.mimeType === 'image/jpeg' || file.mimeType === 'image/jpg')
+    cb(null, true);
+  else
+    cb(null, false);
+}
+
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
 
 // Make public folder accessible by views
 app.use(express.static(path.join(rootDir, 'public')));
+app.use('/images', express.static(path.join(rootDir, 'images')));
 
 app.use(session({secret: 'home is where the heart is', resave: false, saveUninitialized: false, store: store}));
-
 
 // Add csrf protetion middleware via csurf
 app.use(csrfProtection);
@@ -79,12 +100,13 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-// app.get('/500', errorController.error500);
+app.get('/500', errorController.error500);
 
 app.use(errorController.error404);
 
 app.use((error, req, res, next) => {
-  res.status(500).render('500', {pageTitle: 'Error Occurred', path: '/500'});
+  console.log(error);
+  res.status(500).render('500', {pageTitle: 'Error Occurred', path: '/500', isAuth: false});
 });
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })

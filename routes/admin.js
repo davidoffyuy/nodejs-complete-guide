@@ -11,17 +11,17 @@ const router = express.Router();
 // Middleware Imports
 const isAuth = require('../middleware/is-auth');
 
-router.get("/add-product", adminController.getAddProduct);
+router.get("/add-product", isAuth, adminController.getAddProduct);
 router.post("/add-product", isAuth,
-  isAuth,
-  body('title').isString().isLength({min: 2, max: 50}),
-  body('imageUrl').isURL().withMessage('Improper URL format'),
+  body('title').isString().isLength({min: 3, max: 50}),
   body('price').isFloat(),
   body('description').isLength({min: 3, max: 100}),
   adminController.postAddProduct);
 router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
 router.post("/edit-product/", isAuth,
-  body('imageUrl').isURL().withMessage('Improper URL format'),
+  body('title').isString().isLength({min: 3, max: 50}),
+  body('price').isFloat(),
+  body('description').isLength({min: 3, max: 100}),
   adminController.postEditProduct);
 router.post("/delete-product", isAuth, adminController.postDeleteProduct);
 router.get("/products", isAuth, adminController.getProducts);

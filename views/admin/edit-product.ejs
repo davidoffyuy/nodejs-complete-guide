@@ -15,6 +15,7 @@
 			class="product-form"
 				action="<% if (edit === 'true') { %>/admin/edit-product<% } else { %>/admin/add-product<% } %>"
 				method="POST"
+				enctype="multipart/form-data"
 			>
 			<div class="form-control">
 				<label for="title">Title</label>
@@ -26,7 +27,7 @@
 					value="<% if ((edit === 'true') || product ) { %><%= product.title %><% } %>"
 				>
 			</div>
-			<div class="form-control">
+			<!-- <div class="form-control">
 				<label for="imageUrl">Image URL</label>
 				<input
 					class="<%= error.param === 'imageUrl' ? 'invalid' : '' %>"
@@ -35,7 +36,15 @@
 					id="imageUrl"
 					value="<% if ((edit === 'true') || product ) { %><%= product.imageUrl %><% } %>"
 				>
-				</div>
+			</div> -->
+			<div class="form-control">
+				<label for="image">Image</label>
+				<input
+					type="file"
+					name="image"
+					id="image"
+				>
+			</div>
 				<div class="form-control">
 					<label for="price">Price</label>
 					<input
