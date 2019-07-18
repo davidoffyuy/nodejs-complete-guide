@@ -1,6 +1,8 @@
 const Product = require('../models/product');
 const { validationResult } = require('express-validator');
 
+const fileHelper = require('../util/file');
+
 exports.getProducts = (req, res, next) => {
   // Page will only display products that user created. User cannot edit other user products.
   Product.find({userId: req.user._id})
@@ -144,6 +146,7 @@ exports.postEditProduct = (req, res, next) => {
     product.description = description;
     product.price = price;
     if (image)
+      fileHelper.deleteFile(product.imageUrl);
       product.imageUrl = image.path.replace('\\', '/');
     product.save()
     .then( result => {
@@ -156,9 +159,17 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
 
-  Product.deleteOne({_id: req.body.productId, userId: req.user._id})
-  .then(result => {
-    res.redirect("/admin/products");
+  Product.findById({productId})
+  .then( product => {
+    if (!product) {
+      return next(new Error('Product not found.'));
+    }
+    fileHelper.deleteFile(product.imageUrl);
+    Product.deleteOne({_id: productId, userId: req.user._id})
+    .then(result => {
+      res.redirect("/admin/products");
+    })
+    .catch(error => next(error));
   })
-  .catch(error => next(error));
+  .catch(next(err));
 }

@@ -5,6 +5,8 @@ const rootDir = require('../util/path');
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+const PDFDocument = require('pdfkit');
+
 exports.getIndex = (req, res, next) => {
   Product.find()
   .then(products => {
@@ -145,7 +147,28 @@ exports.getInvoice = (req, res, next) => {
     //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
     //   res.send(data);
     // });
-    res.sendFile(invoicePath);
+
+    // res.sendFile(invoicePath);
+
+    const pdfDoc = new PDFDocument();
+    pdfDoc.pipe(fs.createWriteStream(invoicePath));
+    pdfDoc.pipe(res);
+
+    pdfDoc.fontSize(24).text('Invoice', {underline: true});
+    pdfDoc.text('-----------------------');
+
+    let totalPrice = 0;
+
+    order.products.forEach(prod => {
+      pdfDoc.fontSize(16).text(prod.product.title + ' - ' + prod.quantity + ' x $' + prod.product.price);
+      totalPrice += prod.product.price;
+    });
+
+    pdfDoc.text('-----------------------');
+    pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+
+    pdfDoc.end();
+
   })
   .catch(error => next(error));
 }
