@@ -1,0 +1,14 @@
+<section class="pagination">
+  <!-- Display previous/first button if previous pages exist -->
+  <a class='<%= !(page > 1) ? "hide" : "" %>' href="?page=1">&#x3c;&#x3c;</a>
+  <a class='<%= !(page > 1) ? "hide" : "" %>' href="?page=<%= page - 1 %>">&#x3c;</a>
+
+  <!-- Display button for each page -->
+  <% for (let i = 0; i < (total / show); i++) { %>
+  <a href="?page=<%= i + 1 %>"><%= i + 1 %></a>
+  <% } %>
+
+  <!-- Display next/last button if next pages exist -->
+      <a class='<%= (page * show >= total) ? "hide" : "" %>' href="?page=<%= page + 1 %>">&#x3e;</a>
+      <a class='<%= (page * show >= total) ? "hide" : "" %>' href="?page=<%= Math.ceil(total / show) %>">&#x3e;&#x3e;</a>
+</section>
