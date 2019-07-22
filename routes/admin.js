@@ -24,6 +24,7 @@ router.post("/edit-product/", isAuth,
   body('description').isLength({min: 3, max: 100}),
   adminController.postEditProduct);
 router.post("/delete-product", isAuth, adminController.postDeleteProduct);
+router.delete("/product/:productId", isAuth, adminController.deleteProduct);
 router.get("/products", isAuth, adminController.getProducts);
 
 

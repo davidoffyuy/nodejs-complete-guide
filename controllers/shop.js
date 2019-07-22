@@ -16,7 +16,7 @@ exports.getIndex = (req, res, next) => {
   Product.countDocuments()
   .then( num => {
     totalProductCount = num;
-    Product.find()
+    return Product.find()
     .skip((page - 1) * ITEMS_PER_PAGE)
     .limit(ITEMS_PER_PAGE)
     .then(products => {
@@ -28,8 +28,7 @@ exports.getIndex = (req, res, next) => {
         total: totalProductCount,
         show: ITEMS_PER_PAGE
       })
-    })
-    .catch(error => next(error));   
+    });
   })
   .catch(err => next(err));
 
@@ -43,7 +42,7 @@ exports.getProducts = (req, res, next) => {
   Product.countDocuments()
   .then( num => {
     totalProductCount = num;
-    Product.find()
+    return Product.find()
     .skip((page - 1) * ITEMS_PER_PAGE)
     .limit(ITEMS_PER_PAGE)
     .then(products => {
@@ -55,8 +54,7 @@ exports.getProducts = (req, res, next) => {
         total: totalProductCount,
         show: ITEMS_PER_PAGE
       })
-    })
-    .catch(error => next(error));   
+    });
   })
   .catch(error => next(error));
 };
