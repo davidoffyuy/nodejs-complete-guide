@@ -1,5 +1,15 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/cart.css">
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe('<%= publicKey %>');
+  const callStripe = () => {
+    stripe.redirectToCheckout({sessionId: '<%= sessionId %>'})
+    .then(function (result) {
+      console.log("stripe called");
+    });
+  }
+</script>
 </head>
   <body>
     <%- include('../includes/navigation.ejs') %>
@@ -16,7 +26,14 @@
           <div class="centered">
             <h2>Total Cost: $<%= totalCost %></h2>
           </div>
-                          
+          <div class="centered">
+            <button class="stripe-button" onclick="callStripe()">Pay with Stripe</button>
+          </div>          
+
+          <form method="POST" action="/checkout">
+            <input name="testField" type="hidden" value="test">
+            <button type="submit">Submit</button>
+          </form>
         <% } else { %>
           <h1>No Products in Cart!</h1>
         <% } %>

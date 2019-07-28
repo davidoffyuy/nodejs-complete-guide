@@ -84,28 +84,6 @@ exports.getCart = (req, res, next) => {
   .catch(error => next(error));
 };
 
-exports.getCheckout = (req, res, next) => {
-  req.user.populate('cart.items.productId')
-  .execPopulate()
-  .then(user => {
-    console.log(user.cart.items);
-  
-    const totalCost =  user.cart.items.reduce((acc, cur) => {
-      return acc + (cur.productId.price * cur.quantity);
-    }, 0);
-
-    console.log(totalCost);
-
-    res.render('shop/checkout', {
-      pageTitle: 'Checkout',
-      path: '/checkout',
-      products: user.cart.items,
-      totalCost: totalCost
-    });    
-  })
-  .catch(error => next(error));
-};
-
 exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
   Product.findById(productId)

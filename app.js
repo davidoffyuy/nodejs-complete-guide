@@ -16,6 +16,8 @@ const MONGODB_URI = 'mongodb+srv://nodejsguide:nodejsguide@cluster0-xc044.mongod
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require('./routes/auth');
+const paymentRoutes = require('./routes/payment');
+const webhookRoutes = require('./routes/webhook');
 
 //Declare Express
 const app = express();
@@ -37,6 +39,8 @@ app.set('views', 'views'); //set views folder to /views
 
 //make sure the browser doesn't check for a favicon upon load
 app.get("/favicon.ico", (req, res) => res.status(204));
+
+app.use(webhookRoutes);
 
 // Parser for POST text data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -67,12 +71,8 @@ app.use('/images', express.static(path.join(rootDir, 'images')));
 
 app.use(session({secret: 'home is where the heart is', resave: false, saveUninitialized: false, store: store}));
 
-// Add csrf protetion middleware via csurf
-app.use(csrfProtection);
-
 // Setting local data to be available for all renders
 app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
   res.locals.isAuth = req.session.user ? true : false;
   next();
 })
@@ -96,6 +96,16 @@ app.use((req, res, next) => {
 
 // Setting up flash messaging
 app.use(flash());
+
+// Routes without CSRF protection
+app.use(paymentRoutes);
+
+// Add csrf protetion middleware via csurf
+app.use(csrfProtection);
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);

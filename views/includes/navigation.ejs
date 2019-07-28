@@ -36,7 +36,7 @@
                 <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
             </li>
             <% } %>
-            <% if (isAuth) { %>
+            <% if (isAuth && (csrfToken !== '')) { %>
                 <li class="main-header__item">
                     <form method="POST" action="/logout">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -79,7 +79,7 @@
             <li class="mobile-nav__item">
                 <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
             </li>
-        <% } else { %>
+        <% } else if (csrfToken !== '') { %>
             <li class="mobile-nav__item">
                 <form action="/logout" method="post">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
