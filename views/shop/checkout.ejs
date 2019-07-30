@@ -27,13 +27,8 @@
             <h2>Total Cost: $<%= totalCost %></h2>
           </div>
           <div class="centered">
-            <button class="stripe-button" onclick="callStripe()">Pay with Stripe</button>
+            <button class="PaymentRequestButton--dark" onclick="callStripe()">Pay with Stripe</button>
           </div>          
-
-          <form method="POST" action="/checkout">
-            <input name="testField" type="hidden" value="test">
-            <button type="submit">Submit</button>
-          </form>
         <% } else { %>
           <h1>No Products in Cart!</h1>
         <% } %>

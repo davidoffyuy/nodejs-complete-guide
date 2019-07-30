@@ -16,7 +16,6 @@ const MONGODB_URI = 'mongodb+srv://nodejsguide:nodejsguide@cluster0-xc044.mongod
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require('./routes/auth');
-const paymentRoutes = require('./routes/payment');
 const webhookRoutes = require('./routes/webhook');
 
 //Declare Express
@@ -40,6 +39,7 @@ app.set('views', 'views'); //set views folder to /views
 //make sure the browser doesn't check for a favicon upon load
 app.get("/favicon.ico", (req, res) => res.status(204));
 
+// Webhooks. Avoids CSRF protection.
 app.use(webhookRoutes);
 
 // Parser for POST text data
@@ -98,7 +98,6 @@ app.use((req, res, next) => {
 app.use(flash());
 
 // Routes without CSRF protection
-app.use(paymentRoutes);
 
 // Add csrf protetion middleware via csurf
 app.use(csrfProtection);

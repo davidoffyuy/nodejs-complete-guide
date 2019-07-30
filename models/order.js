@@ -10,7 +10,8 @@ const orderSchema = new mongoose.Schema({
   user: {
     email: {type: String, required: true},
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
-  }
+  },
+  stripeEvent: mongoose.Schema.Types.Mixed,
 });
 
 module.exports = mongoose.model('Order', orderSchema);
